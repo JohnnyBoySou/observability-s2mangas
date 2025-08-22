@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  sentry:
+    image: sentry:24.7.0
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_EMAIL_HOST: ${SENTRY_EMAIL_HOST}
+      SENTRY_EMAIL_PORT: ${SENTRY_EMAIL_PORT}
+      SENTRY_EMAIL_USER: ${SENTRY_EMAIL_USER}
+      SENTRY_EMAIL_PASSWORD: ${SENTRY_EMAIL_PASSWORD}
+      SENTRY_SERVER_EMAIL: ${SENTRY_SERVER_EMAIL}
+      SENTRY_POSTGRES_HOST: postgres
+      SENTRY_REDIS_HOST: redis
+    ports:
+      - "9000:9000"
+    volumes:
+      - sentry-data:/data
+
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: sentry
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    restart: always
+    volumes:
+      - redis-data:/data
+
+volumes:
+  sentry-data:
+  postgres-data:
+  redis-data:
