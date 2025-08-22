@@ -1,12 +1,10 @@
-version: '3.4'
-
 services:
-  sentry:
+  sentry-web:
     image: sentry:24.7.0
     depends_on:
       - redis
       - postgres
-    environment:
+    environment: &sentry-environment
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
       SENTRY_EMAIL_HOST: ${SENTRY_EMAIL_HOST}
       SENTRY_EMAIL_PORT: ${SENTRY_EMAIL_PORT}
@@ -14,29 +12,117 @@ services:
       SENTRY_EMAIL_PASSWORD: ${SENTRY_EMAIL_PASSWORD}
       SENTRY_SERVER_EMAIL: ${SENTRY_SERVER_EMAIL}
       SENTRY_POSTGRES_HOST: postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
       SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+      SENTRY_REDIS_DB: 0
+      SENTRY_USE_SSL: ${SENTRY_USE_SSL:-0}
+      SENTRY_WEB_HOST: 0.0.0.0
+      SENTRY_WEB_PORT: 9000
+      SENTRY_SINGLE_ORGANIZATION: ${SENTRY_SINGLE_ORGANIZATION:-1}
     ports:
       - "9000:9000"
     volumes:
       - sentry-data:/data
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/0/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  sentry-worker:
+    image: sentry:24.7.0
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      <<: *sentry-environment
+    command: ["sentry", "run", "worker"]
+    volumes:
+      - sentry-data:/data
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "sentry", "exec", "echo", "worker-health-check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  sentry-cron:
+    image: sentry:24.7.0
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      <<: *sentry-environment
+    command: ["sentry", "run", "cron"]
+    volumes:
+      - sentry-data:/data
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "sentry", "exec", "echo", "cron-health-check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
 
   postgres:
     image: postgres:14
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: sentry
       POSTGRES_USER: sentry
       POSTGRES_PASSWORD: sentry
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentry -d sentry"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:7
-    restart: always
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     volumes:
       - redis-data:/data
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "6379:6379"
+
+networks:
+  sentry-network:
+    driver: bridge
 
 volumes:
   sentry-data:
+    driver: local
   postgres-data:
+    driver: local
   redis-data:
+    driver: local
