@@ -34,9 +34,9 @@ SENTRY_DB_USER=${{Postgres.PGUSER}}
 SENTRY_DB_PASSWORD=${{Postgres.PGPASSWORD}}
 
 # Redis - Use as variáveis do Redis Railway
-SENTRY_REDIS_HOST=${{Redis.REDIS_PRIVATE_URL}}
-SENTRY_REDIS_PORT=6379
-SENTRY_REDIS_DB=0
+# O Railway fornece REDIS_PRIVATE_URL que é automaticamente processado pelo sentry.conf.py
+# Não é necessário configurar variáveis individuais do Redis
+# O arquivo sentry.conf.py extrai automaticamente host, porta e db da URL do Railway
 
 # Configurações Web
 SENTRY_WEB_HOST=0.0.0.0
@@ -88,6 +88,16 @@ O Railway fornece automaticamente:
 - `$PORT` - Porta onde o aplicativo deve escutar
 - `${{Postgres.PGHOST}}` - Host do PostgreSQL
 - `${{Redis.REDIS_PRIVATE_URL}}` - URL do Redis
+
+### Configuração Automática do Redis
+
+Este projeto inclui configuração automática do Redis para Railway:
+- O arquivo `sentry.conf.py` automaticamente detecta e processa a variável `REDIS_PRIVATE_URL` do Railway
+- Extrai host, porta e database da URL do Redis
+- Configura as variáveis necessárias para o Sentry (`SENTRY_REDIS_HOST`, `SENTRY_REDIS_PORT`, `SENTRY_REDIS_DB`)
+- Também define a variável legacy `REDIS_PORT_6379_TCP_ADDR` para compatibilidade
+
+**Importante:** Não é necessário configurar manualmente as variáveis do Redis no Railway - elas são automaticamente configuradas pelo sistema.
 
 ### Logs e Monitoramento
 

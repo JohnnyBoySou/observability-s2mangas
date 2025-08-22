@@ -3,8 +3,12 @@ FROM getsentry/sentry:latest
 # Set working directory
 WORKDIR /usr/src/sentry
 
-# Copy environment configuration
+# Copy configuration files
 COPY .env.example /usr/src/sentry/.env.example
+COPY sentry.conf.py /usr/src/sentry/sentry.conf.py
+
+# Set Sentry configuration file
+ENV SENTRY_CONF=/usr/src/sentry/sentry.conf.py
 
 # Expose the port Sentry runs on
 EXPOSE 9000
