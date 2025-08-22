@@ -1,6 +1,9 @@
 # Environment variables
 .env
 
+# Railway specific environment (should be configured directly in Railway)
+.env.railway
+
 # Docker volumes and data
 sentry-data/
 postgres-data/

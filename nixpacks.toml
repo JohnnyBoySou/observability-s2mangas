@@ -1,0 +1,8 @@
+[variables]
+NIXPACKS_DOCKERFILE = "Dockerfile"
+
+[build]
+cmd = "echo 'Using Dockerfile for build'"
+
+[start]
+cmd = "sentry run web"

@@ -1,6 +1,6 @@
 services:
   sentry-web:
-    image: sentry:24.7.0
+    image: getsentry/sentry:latest
     depends_on:
       - redis
       - postgres
@@ -38,7 +38,7 @@ services:
     restart: unless-stopped
 
   sentry-worker:
-    image: sentry:24.7.0
+    image: getsentry/sentry:latest
     depends_on:
       - redis
       - postgres
@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
 
   sentry-cron:
-    image: sentry:24.7.0
+    image: getsentry/sentry:latest
     depends_on:
       - redis
       - postgres
