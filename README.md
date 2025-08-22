@@ -2,6 +2,14 @@
 
 Este repositório contém a configuração do Sentry para monitoramento e observabilidade do projeto S2Mangas.
 
+## 🚀 Opções de Deploy
+
+### 🐳 Deploy Local com Docker Compose
+Para desenvolvimento local e ambiente on-premise.
+
+### 🚂 Deploy no Railway
+Para deploy em nuvem rápido e fácil. Veja [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) para instruções detalhadas.
+
 ## 🚀 Sobre o Sentry
 
 O Sentry é uma plataforma de monitoramento de erros que ajuda desenvolvedores a identificar, corrigir e otimizar o desempenho de suas aplicações em tempo real.
