@@ -205,6 +205,17 @@ docker compose exec sentry-web sentry cleanup --days=30
 - [Documentação oficial do Sentry](https://docs.sentry.io/)
 - [Sentry Self-Hosted](https://docs.sentry.io/platforms/python/guides/django/configuration/self-hosted/)
 - [Docker Compose para Sentry](https://docs.sentry.io/platforms/python/guides/django/configuration/self-hosted/#docker)
+- [Deploy no Railway](RAILWAY_DEPLOYMENT.md) - Guia específico para deployment no Railway
+
+## 🚂 Deploy no Railway
+
+Este projeto inclui configuração automática para deploy no Railway:
+
+- **Configuração automática do Redis**: O sistema detecta automaticamente as variáveis do Railway Redis
+- **Parsing inteligente de URL**: Converte a URL do Redis Railway para as variáveis individuais necessárias ao Sentry
+- **Fallback para Docker links**: Suporte para variáveis legacy como `REDIS_PORT_6379_TCP_ADDR`
+
+Para deploy no Railway, consulte o [Guia de Deploy Railway](RAILWAY_DEPLOYMENT.md).
 
 ## 🤝 Contribuindo
 
