@@ -1,0 +1,39 @@
+# Environment variables
+.env
+
+# Docker volumes and data
+sentry-data/
+postgres-data/
+redis-data/
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.sql
+*.dump
+backup_*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker build cache
+.docker/
+
+# Monitoring and observability data
+*.pprof
+*.prof
